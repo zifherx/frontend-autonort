@@ -1,17 +1,17 @@
+<script setup></script>
+
 <template>
-  <q-page class="flex flex-center">
-    <img
-      alt="Quasar logo"
-      src="~assets/quasar-logo-vertical.svg"
-      style="width: 200px; height: 200px"
-    >
-  </q-page>
+    <div class="q-pa-md">
+        <div class="row">
+            <!-- Portadas -->
+            <div class="col-12 col-md-8">
+                <h1>Portadas</h1>
+            </div>
+
+            <!-- LOGIN -->
+            <div class="col-12 col-md-4">
+                <h1>LOGIN</h1>
+            </div>
+        </div>
+    </div>
 </template>
-
-<script>
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'IndexPage'
-})
-</script>

@@ -1,0 +1,3 @@
+const globalVariables = {};
+
+export { globalVariables };
