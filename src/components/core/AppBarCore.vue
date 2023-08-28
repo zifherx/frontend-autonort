@@ -21,7 +21,7 @@ const closeSession = () => {
 </script>
 <template>
     <q-header>
-        <q-toolbar class="bg-white">
+        <q-toolbar class="fullOpacity">
             <q-btn dense flat round color="primary" @click="drawer = !drawer">
                 <q-icon :name="drawer ? 'menu' : 'more_vert'"></q-icon>
             </q-btn>
@@ -38,3 +38,10 @@ const closeSession = () => {
         </q-toolbar>
     </q-header>
 </template>
+
+<style>
+.fullOpacity {
+    background-color: #fff;
+    opacity: 0.99;
+}
+</style>

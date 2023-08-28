@@ -14,7 +14,8 @@ defineComponent({
 </script>
 <template>
     <!-- <div> -->
-    <q-layout view="lHh lpr lFf">
+    <!-- <q-layout view="lHh lpr lFf"> -->
+    <q-layout view="lHh Lpr lFf">
         <!-- APP BAR -->
         <app-bar-core />
         <!-- DRAWER -->

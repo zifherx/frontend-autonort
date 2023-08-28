@@ -36,6 +36,7 @@ const rutaPrefixAdmin = ref("/administrative");
 const adminItems = ref([
     { title: "Configuraciones", icon: "settings_applications", to: "/settings" },
     { title: "Permisos", icon: "vpn_lock", to: "/license" },
+    { title: "Vistas", icon: "disabled_visible", to: "/views" },
     { title: "Roles", icon: "fingerprint", to: "/roles" },
     { title: "Usuarios", icon: "groups", to: "/users" },
     { title: "Vehículos", icon: "directions_car", to: "/vehicles" },
@@ -57,10 +58,16 @@ const rutaPrefixDC = ref("/dc");
 const dcItems = ref([{ title: "Actividades", icon: "local_activity", to: "/activities" }]);
 
 const rutaPrefixFinanzas = ref("/finances");
-const finanzasItems = ref([{ title: "Divisas", icon: "currency_exchange", to: "/divisas" }]);
+const finanzasItems = ref([
+    { title: "Divisas", icon: "currency_exchange", to: "/divisas" },
+    { title: "Catalogos", icon: "menu_book", to: "/catalogos" },
+]);
 
 const rutaPrefixRecursosHumanos = ref("/rrhh");
 const rrhhItems = ref([{ title: "Planillas", icon: "article", to: "/planillas" }]);
+
+const rutaPrefixReportes = ref("/reportes");
+const reportesItems = ref([{ title: "Seguimiento", icon: "insights", to: "/seguimiento" }]);
 
 init();
 </script>
@@ -96,7 +103,7 @@ init();
                     </q-item-section>
                 </q-item>
 
-                <q-separator dark class="q-mb-md" />
+                <q-separator dark class="q-my-md" />
 
                 <q-expansion-item expand-separator icon="dashboard" label="Dashboard">
                     <q-item v-for="(item, index) in adminDashboard" :key="index" :to="rutaPrefixDashboard + item.to" :inset-level="0.5" clickable active-class="primary">
@@ -152,6 +159,16 @@ init();
 
                 <q-expansion-item expand-separator icon="groups" label="Recursos Humanos">
                     <q-item v-for="(item, index) in rrhhItems" :key="index" :to="rutaPrefixRecursosHumanos + item.to" :inset-level="0.5" clickable active-class="primary">
+                        <q-item-section avatar>
+                            <q-icon color="white" :name="item.icon" />
+                        </q-item-section>
+
+                        <q-item-section>{{ item.title }}</q-item-section>
+                    </q-item>
+                </q-expansion-item>
+
+                <q-expansion-item expand-separator icon="analytics" label="Reportes">
+                    <q-item v-for="(item, index) in reportesItems" :key="index" :to="rutaPrefixReportes + item.to" :inset-level="0.5" clickable active-class="primary">
                         <q-item-section avatar>
                             <q-icon color="white" :name="item.icon" />
                         </q-item-section>

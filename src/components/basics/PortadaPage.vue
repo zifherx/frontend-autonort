@@ -15,7 +15,7 @@ let fullscreen = ref(false);
         <q-carousel
             v-model="slides"
             v-model:fullscreen="fullscreen"
-            height="600px"
+            height="550px"
             animated
             arrows
             infinite

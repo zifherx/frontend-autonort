@@ -18,3 +18,7 @@ export function checkNullOrUndefined(field) {
     };
     return map[field] ?? false;
 }
+
+export function cleanTable(table) {
+    table.splice(table, table.length);
+}
