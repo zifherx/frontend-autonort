@@ -11,8 +11,9 @@ defineComponent({
 </script>
 
 <template>
-    <div class="q-pa-md">
-        <q-layout view="hHh lpr fFf">
+    <div>
+        <!-- <div class="q-pa-md"> -->
+        <q-layout view="hHr lpR fFf">
             <!-- HEADER  -->
             <header-page />
 

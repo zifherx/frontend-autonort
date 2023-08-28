@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { readonly, ref } from "vue";
 
 export const useInitStore = defineStore("Init", () => {
+    const drawer = ref(true);
     const platformSidebar = ref(true);
     const platformName = ref("Plataforma Integral Autonort");
     const platformAbbreviation = ref("PIA");
@@ -10,6 +11,7 @@ export const useInitStore = defineStore("Init", () => {
     const platformAuthor = ref("Ziphonex");
 
     return {
+        drawer,
         platformSidebar,
         platformName: readonly(platformName),
         platformAbbreviation: readonly(platformAbbreviation),

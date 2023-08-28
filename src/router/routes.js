@@ -9,7 +9,18 @@ const routes = [
             },
         ],
     },
-
+    {
+        path: "/dashboard",
+        component: () => import("layouts/CoreLayout.vue"),
+        meta: { requireAuth: true },
+        children: [
+            {
+                name: "Dashboard",
+                path: "",
+                component: () => import("pages/mainDashboard/DashboardPage.vue"),
+            },
+        ],
+    },
     // Always leave this as last one,
     // but you can also remove it
     {

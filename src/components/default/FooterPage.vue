@@ -4,7 +4,7 @@ import { useInitStore } from "src/stores/init.store";
 import { ref } from "vue";
 
 const initStore = useInitStore();
-const { platformAbbreviation: abbreviationApp, platformVersion: versionApp, platformDesignedBy: designedByApp, platformAuthor: authorApp, pla } = storeToRefs(initStore);
+const { platformAbbreviation: abbreviationApp, platformVersion: versionApp, platformDesignedBy: designedByApp, platformAuthor: authorApp } = storeToRefs(initStore);
 const yearApp = ref(new Date().getFullYear());
 </script>
 

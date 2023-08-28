@@ -1,0 +1,23 @@
+<script setup>
+import { storeToRefs } from "pinia";
+import { useAuthStore } from "src/stores/auth.store";
+import { API_INSTANCE_MAIN } from "src/boot/axios";
+
+const useAuth = useAuthStore();
+const { userStore } = storeToRefs(useAuth);
+
+const init = () => {
+    useAuth.detectUserStore();
+    asignarTokenAxios();
+};
+
+const asignarTokenAxios = () => {
+    API_INSTANCE_MAIN.defaults.headers["x-access-token"] = userStore.value.token;
+};
+
+init();
+</script>
+
+<template>
+    <q-page></q-page>
+</template>

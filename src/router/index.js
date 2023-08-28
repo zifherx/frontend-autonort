@@ -30,7 +30,7 @@ export default route(function (/* { store, ssrContext } */) {
         const authorized = to.matched.some((a) => a.meta.requireAuth);
         const logged = localStorage.getItem("data-token");
 
-        if (authorized && logged) {
+        if (authorized && !logged) {
             next("/");
         } else if (!authorized && logged) {
             next("/dashboard");
