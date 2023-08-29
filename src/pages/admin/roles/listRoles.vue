@@ -6,14 +6,21 @@ import { getAllService } from "src/services";
 
 const route = useRoute();
 
-const headerTable = computed(() => {
-    return [
-        { label: "Rol", field: "name", name: "name", align: "left", sortable: false, headerClasses: "text-uppercase" },
-        { label: "Descripción", field: "description", name: "description", align: "left", sortable: false, headerClasses: "text-uppercase" },
-        { label: "Estado", field: "estado", name: "estado", align: "center", required: true, sortable: false, headerClasses: "text-uppercase" },
-        { label: "Acciones", field: "actions", name: "actions", align: "center", sortable: false, headerClasses: "text-uppercase" },
-    ];
-});
+// const headerTable = computed(() => {
+//     return [
+//         { label: "Rol", field: "name", name: "name", align: "left", sortable: false, headerClasses: "text-uppercase" },
+//         { label: "Descripción", field: "description", name: "description", align: "left", sortable: false, headerClasses: "text-uppercase" },
+//         { label: "Estado", field: "estado", name: "estado", align: "center", required: true, sortable: false, headerClasses: "text-uppercase" },
+//         { label: "Acciones", field: "actions", name: "actions", align: "center", sortable: false, headerClasses: "text-uppercase" },
+//     ];
+// });
+
+const headerTable = ref([
+    { label: "Rol", field: "name", name: "name", align: "left", sortable: false, headerClasses: "text-uppercase" },
+    { label: "Descripción", field: "description", name: "description", align: "left", sortable: false, headerClasses: "text-uppercase" },
+    { label: "Estado", field: "estado", name: "estado", align: "center", required: true, sortable: false, headerClasses: "text-uppercase" },
+    { label: "Acciones", field: "actions", name: "actions", align: "center", sortable: false, headerClasses: "text-uppercase" },
+]);
 
 const contentTable = reactive([]);
 const searchTable = ref("");
@@ -22,6 +29,20 @@ const noFilterTable = ref("La búsqueda no encontró resultados");
 const loadingTable = ref(false);
 const pagination = ref({ sortBy: "desc", descending: false, page: 1, rowsPerPage: 30 });
 const pageMaxNumber = computed(() => Math.ceil(contentTable.length / pagination.value.rowsPerPage));
+let dialogItem = ref(false);
+
+let editedIndex = ref(-1);
+let editedItem = ref({
+    name: "",
+    description: "",
+    estado: true,
+});
+let defaultItem = ref({
+    name: "",
+    description: "",
+    estado: true,
+});
+let titleDialog = computed(() => (editedIndex === -1 ? `Actualizar Cliente` : `Nuevo Cliente`));
 
 const getData = async () => {
     loadingTable.value = true;
@@ -47,14 +68,23 @@ const getData = async () => {
     }
 };
 
-const init = async () => {
+function viewItem(item) {
+    editedIndex.value = contentTable.indexOf(item);
+    editedItem.value = Object.assign({}, item);
+    console.log(editedIndex.value);
+    console.log(editedItem.value);
+    dialogItem.value = true;
+}
+
+function init() {
     if (contentTable.length > 0) {
         pro.cleanTable(contentTable);
         getData();
     } else {
         getData();
     }
-};
+}
+
 init();
 </script>
 
@@ -88,10 +118,43 @@ init();
                                 </template>
                             </q-input>
 
-                            <q-btn fab-mini color="primary" class="q-mx-sm">
+                            <q-btn fab-mini color="primary" class="q-mx-sm" @click="init">
+                                <q-icon name="refresh"></q-icon>
+                                <q-tooltip>Refrescar</q-tooltip>
+                            </q-btn>
+
+                            <q-btn fab-mini color="primary" class="q-mx-sm" @click="dialogItem = true">
                                 <q-icon name="person_add"></q-icon>
                                 <q-tooltip>Nuevo</q-tooltip>
                             </q-btn>
+
+                            <q-dialog v-model="dialogItem" persistent transition-show="flip-down" transition-hide="flip-up">
+                                <q-card>
+                                    <q-card-section class="bg-primary text-white text-uppercase row items-center q-pb-none">
+                                        <q-icon left name="label" size="sm"></q-icon>
+                                        <span class="text-h6">{{ titleDialog }}</span>
+                                        <q-space />
+                                        <q-btn icon="close" flat round dense v-close-popup />
+                                    </q-card-section>
+                                    <q-separator />
+                                    <q-card-section>
+                                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolorum laboriosam vero voluptatibus ipsam porro maiores sapiente quos ducimus,
+                                        dolores est ipsum libero, vitae, neque necessitatibus exercitationem possimus explicabo saepe reiciendis?
+                                    </q-card-section>
+                                    <q-separator />
+                                    <q-card-section class="row item-center">
+                                        <q-space />
+                                        <q-btn color="primary" size="sm" @click="dialogItem = false">
+                                            <q-icon name="cancel" left></q-icon>
+                                            Cancelar
+                                        </q-btn>
+                                        <q-btn color="secondary" size="sm" class="q-ml-sm">
+                                            Aceptar
+                                            <q-icon name="done" right></q-icon>
+                                        </q-btn>
+                                    </q-card-section>
+                                </q-card>
+                            </q-dialog>
 
                             <q-btn fab-mini color="primary" class="q-mx-sm" no-caps>
                                 <q-icon name="mdi-microsoft-excel"></q-icon>
@@ -117,7 +180,7 @@ init();
                         <template v-slot:body-cell-actions="item">
                             <q-td>
                                 <div class="text-center">
-                                    <q-btn size="md-" flat round color="info">
+                                    <q-btn size="md-" flat round color="info" @click="viewItem(item.row)">
                                         <q-icon name="visibility"></q-icon>
                                         <q-tooltip>Ver {{ route.name }}</q-tooltip>
                                     </q-btn>
@@ -134,12 +197,33 @@ init();
                             <div class="q-pa-xs col-xs-12 col-sm-6 col-md-4 col-lg-4 grid-style-transition escalaGrid">
                                 <q-card bordered flat bg-grey-2>
                                     <q-list dense>
-                                        <q-item v-for="(col, index) in props.cols.filter((a) => a.name !== 'desc')" :key="index">
+                                        <q-item v-for="(col, index) in props.cols.filter((a) => a.name !== 'desc' && a.name !== 'actions')" :key="index">
                                             <q-item-section>
                                                 <q-item-label class="text-weight-bold">{{ col.label }}</q-item-label>
                                             </q-item-section>
                                             <q-item-section side>
                                                 <q-item-label caption>{{ col.value }}</q-item-label>
+                                            </q-item-section>
+                                        </q-item>
+                                    </q-list>
+                                    <q-separator />
+                                    <q-list>
+                                        <q-item>
+                                            <q-item-section>
+                                                <q-item-label class="text-weight-bold">Acción</q-item-label>
+                                            </q-item-section>
+                                            <q-item-section side>
+                                                <div q-gutter-xs>
+                                                    <q-btn size="md-" flat round color="info" @click="viewItem(item.row)">
+                                                        <q-icon name="visibility"></q-icon>
+                                                        <q-tooltip>Ver {{ route.name }}</q-tooltip>
+                                                    </q-btn>
+
+                                                    <q-btn flat round color="primary">
+                                                        <q-icon name="delete"></q-icon>
+                                                        <q-tooltip>Eliminar {{ route.name }}</q-tooltip>
+                                                    </q-btn>
+                                                </div>
                                             </q-item-section>
                                         </q-item>
                                     </q-list>
@@ -159,6 +243,10 @@ init();
                             <q-inner-loading showing color="primary"></q-inner-loading>
                         </template>
                     </q-table>
+
+                    <!-- <pre>
+                        {{ visibleColumns }}
+                    </pre> -->
 
                     <div class="q-pa-lg flex flex-center">
                         <q-pagination v-model="pagination.page" color="primary" :max="pageMaxNumber" direction-links />

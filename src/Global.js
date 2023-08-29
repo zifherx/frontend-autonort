@@ -1,6 +1,7 @@
 const globalVariables = {
     // MAIN SERVER
     URL_HEROKU_SERVER_PUBLIC: "http://localhost:3000/api/",
+    // URL_HEROKU_SERVER_PUBLIC: "",
     // URL_HEROKU_SERVER_PUBLIC: "http://192.168.0.37:3000/api/",
 
     // PERUDEV SERVER

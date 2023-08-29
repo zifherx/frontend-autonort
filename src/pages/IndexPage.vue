@@ -3,7 +3,7 @@ import LoginPage from "../components/basics/LoginPage.vue";
 import PortadaPage from "../components/basics/PortadaPage.vue";
 import { getActiveService } from "src/services/item.services";
 import * as pro from "src/plugins/helper";
-import { defineAsyncComponent, ref } from "vue";
+import { ref } from "vue";
 
 const imageLinks = ref([]);
 
@@ -12,9 +12,10 @@ async function getPortadas() {
         const query = await getActiveService("portada");
         if (pro.HTTPResponse(query.status)) {
             await query.data.all.forEach((element) => {
-                let a = {};
-                a.name = element.name;
-                a.src = element.avatar;
+                let a = {
+                    name: element.name,
+                    src: element.avatar,
+                };
                 imageLinks.value.push(a);
             });
         }

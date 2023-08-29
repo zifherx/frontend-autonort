@@ -21,7 +21,6 @@ const API_INSTANCE_PERUDEV = axios.create({
 
 export default boot(({ app }) => {
     app.config.globalProperties.$axios = axios;
-
     app.config.globalProperties.$api = API_INSTANCE_MAIN;
 });
 
