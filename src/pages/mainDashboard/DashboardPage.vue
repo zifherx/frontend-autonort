@@ -12,6 +12,7 @@ const init = () => {
 };
 
 const asignarTokenAxios = () => {
+    console.log(userStore.value.token);
     API_INSTANCE_MAIN.defaults.headers["x-access-token"] = userStore.value.token;
 };
 

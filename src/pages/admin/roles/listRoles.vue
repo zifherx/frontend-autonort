@@ -2,7 +2,8 @@
 import { computed, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
 import * as pro from "src/plugins/helper";
-import { getAllService } from "src/services";
+import * as notif from "src/plugins/notifications";
+import { getAllService, patchUpdateServiceById, postService } from "src/services";
 
 const route = useRoute();
 
@@ -33,16 +34,34 @@ let dialogItem = ref(false);
 
 let editedIndex = ref(-1);
 let editedItem = ref({
+    codigo: "",
     name: "",
     description: "",
     estado: true,
 });
 let defaultItem = ref({
+    codigo: "",
     name: "",
     description: "",
-    estado: true,
+    estado: false,
 });
-let titleDialog = computed(() => (editedIndex === -1 ? `Actualizar Cliente` : `Nuevo Cliente`));
+let titleDialog = computed(() => (editedIndex.value === -1 ? `Nuevo Rol` : `Actualizar Rol`));
+
+const loadingBtn = ref([false]);
+const progress = ref(false);
+
+function simulateProgress(number) {
+    loadingBtn.value[number] = true;
+
+    setTimeout(() => {
+        console.log("Objeto Guardado");
+        saveItem();
+    }, 1000);
+
+    setTimeout(() => {
+        loadingBtn.value[number] = false;
+    }, 3000);
+}
 
 const getData = async () => {
     loadingTable.value = true;
@@ -62,8 +81,9 @@ const getData = async () => {
             loadingTable.value = false;
         }
     } catch (err) {
-        console.log(err);
-        console.log(err.response);
+        pro.handleError(err.response);
+        // console.log(err);
+        // console.log(err.response);
         loadingTable.value = false;
     }
 };
@@ -71,9 +91,13 @@ const getData = async () => {
 function viewItem(item) {
     editedIndex.value = contentTable.indexOf(item);
     editedItem.value = Object.assign({}, item);
-    console.log(editedIndex.value);
-    console.log(editedItem.value);
     dialogItem.value = true;
+}
+
+function closeDialogItem() {
+    editedIndex.value = -1;
+    editedItem.value = Object.assign({}, defaultItem.value);
+    dialogItem.value = false;
 }
 
 function init() {
@@ -85,6 +109,51 @@ function init() {
     }
 }
 
+async function saveItem() {
+    let obj = {
+        name: editedItem.value.name,
+        description: editedItem.value.description,
+        estado: editedItem.value.estado,
+    };
+
+    if (editedIndex.value > -1) {
+        console.log("edited");
+        try {
+            const query = await patchUpdateServiceById("roles", editedItem.value.codigo, obj);
+            if (pro.HTTPResponse(query.status)) {
+                notif.notify_Succesfull(query.data.message);
+                closeDialogItem();
+                init();
+            }
+        } catch (err) {
+            pro.handleError(err.response);
+            // console.log(err);
+            // console.log(err.response);
+        }
+    } else {
+        console.log("new");
+        try {
+            const query = await postService("roles", obj);
+            if (pro.HTTPResponse(query.status)) {
+                notif.notify_Succesfull(query.data.message);
+                closeDialogItem();
+                init();
+            }
+        } catch (err) {
+            pro.handleError(err.response);
+        }
+    }
+}
+
+async function deleteItem() {
+    const askEliminar = notif.askQuestion("Estás seguro que deseas eliminar", "No podrás revertir la operación");
+    askEliminar.then((result) => {
+        console.log(result);
+        if (result.isConfimed) {
+        }
+    });
+}
+
 init();
 </script>
 
@@ -93,7 +162,6 @@ init();
         <div class="q-pa-md">
             <div class="row q-mt-lg">
                 <div class="col">
-                    <!-- grid -->
                     <q-table
                         :title="route.name"
                         outlined
@@ -124,35 +192,72 @@ init();
                             </q-btn>
 
                             <q-btn fab-mini color="primary" class="q-mx-sm" @click="dialogItem = true">
-                                <q-icon name="person_add"></q-icon>
+                                <q-icon name="add"></q-icon>
                                 <q-tooltip>Nuevo</q-tooltip>
                             </q-btn>
 
                             <q-dialog v-model="dialogItem" persistent transition-show="flip-down" transition-hide="flip-up">
-                                <q-card>
+                                <q-card style="width: 600px; max-width: 80vw">
                                     <q-card-section class="bg-primary text-white text-uppercase row items-center q-pb-none">
                                         <q-icon left name="label" size="sm"></q-icon>
                                         <span class="text-h6">{{ titleDialog }}</span>
                                         <q-space />
-                                        <q-btn icon="close" flat round dense v-close-popup />
+                                        <q-btn icon="close" flat round dense @click="closeDialogItem" />
                                     </q-card-section>
                                     <q-separator />
                                     <q-card-section>
-                                        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolorum laboriosam vero voluptatibus ipsam porro maiores sapiente quos ducimus,
-                                        dolores est ipsum libero, vitae, neque necessitatibus exercitationem possimus explicabo saepe reiciendis?
+                                        <q-form>
+                                            <div class="row q-gutter-sm">
+                                                <div class="col-8">
+                                                    <q-input v-model="editedItem.name" label="Nombre de rol" color="primary" autofocus dense outlined input-class="text-left">
+                                                        <template v-slot:prepend>
+                                                            <q-icon name="label" />
+                                                        </template>
+                                                    </q-input>
+                                                </div>
+                                                <div class="col-3">
+                                                    <q-toggle
+                                                        v-model="editedItem.estado"
+                                                        color="primary"
+                                                        :icon="editedItem.estado ? 'thumb_up' : 'thumb_down'"
+                                                        :label="`Estado ${editedItem.estado}`"
+                                                        :false-value="false"
+                                                        :true-value="true"
+                                                    />
+                                                </div>
+                                                <div class="col-12">
+                                                    <q-input
+                                                        v-model="editedItem.description"
+                                                        type="textarea"
+                                                        label="Descripción de rol"
+                                                        autogrow
+                                                        dense
+                                                        outlined
+                                                        input-class="text-left"
+                                                    >
+                                                        <template v-slot:prepend>
+                                                            <q-icon name="description" />
+                                                        </template>
+                                                    </q-input>
+                                                </div>
+                                            </div>
+                                        </q-form>
                                     </q-card-section>
                                     <q-separator />
-                                    <q-card-section class="row item-center">
-                                        <q-space />
-                                        <q-btn color="primary" size="sm" @click="dialogItem = false">
+                                    <q-card-actions align="right">
+                                        <q-btn color="primary" size="sm" @click="closeDialogItem">
                                             <q-icon name="cancel" left></q-icon>
                                             Cancelar
                                         </q-btn>
-                                        <q-btn color="secondary" size="sm" class="q-ml-sm">
+                                        <q-btn color="secondary" size="sm" class="q-ml-sm anchoBtn" :loading="loadingBtn[0]" @click="simulateProgress(0)">
                                             Aceptar
-                                            <q-icon name="done" right></q-icon>
+                                            <q-icon name="done" right />
+                                            <template v-slot:loading>
+                                                <q-spinner-hourglass class="on-left" />
+                                                Cargando...
+                                            </template>
                                         </q-btn>
-                                    </q-card-section>
+                                    </q-card-actions>
                                 </q-card>
                             </q-dialog>
 
@@ -185,7 +290,7 @@ init();
                                         <q-tooltip>Ver {{ route.name }}</q-tooltip>
                                     </q-btn>
 
-                                    <q-btn flat round color="primary">
+                                    <q-btn flat round color="primary" @click="deleteItem(item.row)">
                                         <q-icon name="delete"></q-icon>
                                         <q-tooltip>Eliminar {{ route.name }}</q-tooltip>
                                     </q-btn>
@@ -214,7 +319,7 @@ init();
                                             </q-item-section>
                                             <q-item-section side>
                                                 <div q-gutter-xs>
-                                                    <q-btn size="md-" flat round color="info" @click="viewItem(item.row)">
+                                                    <q-btn size="md-" flat round color="info" @click="viewItem(props.row)">
                                                         <q-icon name="visibility"></q-icon>
                                                         <q-tooltip>Ver {{ route.name }}</q-tooltip>
                                                     </q-btn>
@@ -244,10 +349,6 @@ init();
                         </template>
                     </q-table>
 
-                    <!-- <pre>
-                        {{ visibleColumns }}
-                    </pre> -->
-
                     <div class="q-pa-lg flex flex-center">
                         <q-pagination v-model="pagination.page" color="primary" :max="pageMaxNumber" direction-links />
                     </div>
@@ -260,5 +361,9 @@ init();
 <style>
 .escalaGrid {
     transform: scale(0.95);
+}
+
+.anchoBtn {
+    width: 180px;
 }
 </style>

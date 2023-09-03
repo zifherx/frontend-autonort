@@ -35,3 +35,20 @@ export function notify_Succesfull(message) {
         title: message,
     });
 }
+
+export function alertError(title, message) {
+    return Swal.fire({
+        icon: "error",
+        title: title,
+        text: message,
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        timerProgressBar: true,
+        timer: counterTimer,
+        didOpen: (a) => {
+            a.addEventListener("mouseenter", Swal.stopTimer);
+            a.addEventListener("mouseleave", Swal.resumeTimer);
+        },
+    });
+}
