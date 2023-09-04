@@ -70,20 +70,14 @@ export function handleError(param) {
             break;
     }
 
-    // return obj;
     notif.alertError(obj.title, obj.message);
-    // Swal.fire({
-    //     icon: "error",
-    //     title: obj.title,
-    //     text: obj.message,
-    //     showConfirmButton: false,
-    //     allowOutsideClick: false,
-    //     allowEscapeKey: false,
-    //     timerProgressBar: true,
-    //     timer: counterTimer,
-    //     didOpen: (a) => {
-    //         a.addEventListener("mouseenter", Swal.stopTimer);
-    //         a.addEventListener("mouseleave", Swal.resumeTimer);
-    //     },
-    // });
+}
+
+export function colorSede(item) {
+    if (item === "Jaén") return "purple-6";
+    else if (item === "Trujillo") return "amber-7";
+    else if (item === "Chachapoyas") return "blue-6";
+    else if (item === "Tarapoto") return "green-6";
+    else if (item === "Todas") return "$primary";
+    else return "brown-4";
 }

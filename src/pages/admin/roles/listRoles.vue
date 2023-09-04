@@ -3,18 +3,10 @@ import { computed, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
 import * as pro from "src/plugins/helper";
 import * as notif from "src/plugins/notifications";
-import { getAllService, patchUpdateServiceById, postService } from "src/services";
+import * as xs from "src/plugins/excelFeatures";
+import { deleteServiceById, getAllService, patchUpdateServiceById, postService } from "src/services";
 
 const route = useRoute();
-
-// const headerTable = computed(() => {
-//     return [
-//         { label: "Rol", field: "name", name: "name", align: "left", sortable: false, headerClasses: "text-uppercase" },
-//         { label: "Descripción", field: "description", name: "description", align: "left", sortable: false, headerClasses: "text-uppercase" },
-//         { label: "Estado", field: "estado", name: "estado", align: "center", required: true, sortable: false, headerClasses: "text-uppercase" },
-//         { label: "Acciones", field: "actions", name: "actions", align: "center", sortable: false, headerClasses: "text-uppercase" },
-//     ];
-// });
 
 const headerTable = ref([
     { label: "Rol", field: "name", name: "name", align: "left", sortable: false, headerClasses: "text-uppercase" },
@@ -145,13 +137,39 @@ async function saveItem() {
     }
 }
 
-async function deleteItem() {
+async function deleteItem(item) {
+    console.log(item);
     const askEliminar = notif.askQuestion("Estás seguro que deseas eliminar", "No podrás revertir la operación");
-    askEliminar.then((result) => {
+    askEliminar.then(async (result) => {
         console.log(result);
         if (result.isConfimed) {
+            try {
+                const query = await deleteServiceById("roles", item.codigo);
+                if (pro.HTTPResponse(query.status)) {
+                    notif.notify_Succesfull(query.data.message);
+                    init();
+                }
+            } catch (err) {
+                pro.handleError(err.response);
+            }
         }
     });
+}
+
+async function exportItems() {
+    const headerT = ref([
+        { header: "Rol", key: "name", width: 30 },
+        { header: "Descripción", key: "description", width: 100 },
+        { header: "Estado", key: "estado", width: 20 },
+    ]);
+    const contentT = ref([]);
+
+    for (let item of contentTable) {
+        contentT.value.push({ name: item.name, description: item.description, estado: item.estado });
+    }
+
+    // Exportar Tabla
+    xs.createExcelTable(`Lista de Roles ${new Date().getFullYear()}`, headerT.value, contentT.value, "A1:C1", `Catálogo de Roles - ${new Date().getFullYear()}`);
 }
 
 init();
@@ -261,7 +279,7 @@ init();
                                 </q-card>
                             </q-dialog>
 
-                            <q-btn fab-mini color="primary" class="q-mx-sm" no-caps>
+                            <q-btn fab-mini color="primary" class="q-mx-sm" no-caps @click="exportItems">
                                 <q-icon name="mdi-microsoft-excel"></q-icon>
                                 <q-tooltip>Exportar</q-tooltip>
                             </q-btn>
