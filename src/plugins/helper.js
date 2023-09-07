@@ -81,3 +81,31 @@ export function colorSede(item) {
     else if (item === "Todas") return "$primary";
     else return "brown-4";
 }
+
+export function formattingDate(date, option) {
+    let newDate = new Date(date);
+
+    let yearX = newDate.getUTCFullYear();
+    let monthX = newDate.getUTCMonth() + 1;
+    let dayX = newDate.getUTCDate();
+
+    if (monthX < 10) monthX = "0" + monthX;
+    if (dayX < 10) dayX = "0" + dayX;
+
+    let hourFromDate = newDate.toTimeString();
+
+    let newDate2 = new Date();
+    let hourX = newDate2.getHours() + ":" + newDate2.getMinutes() + ":" + newDate2.getSeconds();
+
+    switch (option) {
+        case 1:
+            return yearX + "-" + monthX + "-" + dayX + " " + hourFromDate.substring(0, 8);
+        // break;
+        case 2:
+            return yearX + "-" + monthX + "-" + dayX + " " + hourX;
+        // break;
+        case 3:
+            return yearX + "-" + monthX + "-" + dayX;
+        // break;
+    }
+}

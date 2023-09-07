@@ -22,6 +22,7 @@ export function notify_Succesfull(message) {
     const toast = Swal.mixin({
         toast: true,
         position: "top-end",
+        background: "#fff",
         showConfirmButton: false,
         timer: timerCounter,
         timerProgressBar: true,

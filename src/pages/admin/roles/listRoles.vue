@@ -303,14 +303,32 @@ init();
                         <template v-slot:body-cell-actions="item">
                             <q-td>
                                 <div class="text-center">
-                                    <q-btn size="md-" flat round color="info" @click="viewItem(item.row)">
+                                    <q-btn flat round color="info" @click="viewItem(item.row)">
                                         <q-icon name="visibility"></q-icon>
-                                        <q-tooltip>Ver {{ route.name }}</q-tooltip>
+                                        <q-tooltip
+                                            class="bg-info"
+                                            anchor="center left"
+                                            self="center end"
+                                            :offset="[10, 10]"
+                                            transition-show="flip-right"
+                                            transition-hide="flip-left"
+                                        >
+                                            Ver
+                                        </q-tooltip>
                                     </q-btn>
 
                                     <q-btn flat round color="primary" @click="deleteItem(item.row)">
                                         <q-icon name="delete"></q-icon>
-                                        <q-tooltip>Eliminar {{ route.name }}</q-tooltip>
+                                        <q-tooltip
+                                            class="bg-primary"
+                                            anchor="center left"
+                                            self="center end"
+                                            :offset="[10, 10]"
+                                            transition-show="flip-right"
+                                            transition-hide="flip-left"
+                                        >
+                                            Eliminar
+                                        </q-tooltip>
                                     </q-btn>
                                 </div>
                             </q-td>

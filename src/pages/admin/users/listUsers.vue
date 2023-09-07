@@ -12,12 +12,13 @@ const headerTable = ref([
     { label: "Nombre", field: "name", name: "name", align: "left", headerClasses: "text-uppercase" },
     // { label: "Usuario", field: "username", name: "username", align: "center", headerClasses: "text-uppercase" },
     { label: "DNI", field: "documento", name: "documento", align: "center", headerClasses: "text-uppercase" },
-    { label: "Email", field: "email", name: "email", align: "center", headerClasses: "text-uppercase" },
-    { label: "Celular", field: "phone", name: "phone", align: "center", headerClasses: "text-uppercase" },
+    // { label: "Email", field: "email", name: "email", align: "center", headerClasses: "text-uppercase" },
+    // { label: "Celular", field: "phone", name: "phone", align: "center", headerClasses: "text-uppercase" },
     { label: "Roles", field: "roles", name: "roles", align: "center", headerClasses: "text-uppercase" },
     { label: "Cobertura", field: "sedeAcargo", name: "sedeAcargo", align: "center", headerClasses: "text-uppercase" },
     { label: "Estado", field: "estado", name: "estado", align: "center", headerClasses: "text-uppercase" },
     { label: "Online", field: "online", name: "online", align: "center", headerClasses: "text-uppercase" },
+    { label: "Actividad", field: "last_activity", name: "last_activity", align: "center", headerClasses: "text-uppercase" },
     { label: "Acciones", field: "actions", name: "actions", align: "center", sortable: false, headerClasses: "text-uppercase" },
 ]);
 const contentTable = reactive([]);
@@ -55,6 +56,7 @@ let defaultItem = ref({
 let dialogItem = ref(false);
 let titleDialog = computed(() => (editedIndex.value === -1 ? `Nuevo Rol` : `Actualizar Rol`));
 const loadingBtn = ref([false]);
+const rowSelection = ref([]);
 
 function simulateProgress(number) {
     loadingBtn.value[number] = true;
@@ -88,6 +90,7 @@ const getData = async () => {
                     sedeAcargo: pro.checkNullOrUndefined(element.sedeAcargo) ? "" : element.sedeAcargo.map((a) => a.name),
                     estado: element.estado,
                     online: element.online,
+                    last_activity: pro.formattingDate(element.updatedAt, 1),
                 };
                 contentTable.push(obj);
             });
@@ -108,8 +111,18 @@ function init() {
     }
 }
 
+function closeDialogItem() {
+    editedIndex.value = -1;
+    editedItem.value = Object.assign({}, defaultItem.value);
+    dialogItem.value = false;
+}
+
 function colorSede(item) {
     return pro.colorSede(item);
+}
+
+async function exportItems() {
+    notif.notify_Succesfull("Exportando");
 }
 
 init();
@@ -134,7 +147,9 @@ init();
                         :loading="loadingTable"
                         separator="cell"
                         hide-pagination
+                        selection="single"
                         v-model:pagination="pagination"
+                        v-model:selected="rowSelection"
                     >
                         <template v-slot:top-right>
                             <q-input v-model="searchTable" placeholder="Filtrar por..." clearable outlined dense label="Buscar..." debounce="300">
@@ -145,8 +160,41 @@ init();
 
                             <q-btn fab-mini color="primary" class="q-mx-sm" @click="init">
                                 <q-icon name="refresh"></q-icon>
-                                <q-tooltip>Refrescar</q-tooltip>
+                                <q-tooltip class="bg-primary" anchor="bottom middle" self="top middle" :offset="[10, 10]" transition-show="flip-right" transition-hide="flip-left">
+                                    Refrescar
+                                </q-tooltip>
                             </q-btn>
+
+                            <q-btn fab-mini color="primary" class="q-mx-sm" @click="dialogItem = !dialogItem">
+                                <q-icon name="person_add"></q-icon>
+                                <q-tooltip class="bg-primary" anchor="bottom middle" self="top middle" :offset="[10, 10]" transition-show="flip-right" transition-hide="flip-left">
+                                    Nuevo
+                                </q-tooltip>
+                            </q-btn>
+
+                            <q-btn fab-mini color="primary" class="q-mx-sm" no-caps @click="exportItems">
+                                <q-icon name="mdi-microsoft-excel"></q-icon>
+                                <q-tooltip class="bg-primary" anchor="bottom middle" self="top middle" :offset="[10, 10]" transition-show="flip-right" transition-hide="flip-left">
+                                    Exportar
+                                </q-tooltip>
+                            </q-btn>
+
+                            <q-dialog v-model="dialogItem" persistent transition-show="flip-down" transition-hide="flip-up">
+                                <q-card>
+                                    <q-card-section></q-card-section>
+                                    <q-separator></q-separator>
+                                    <q-card-section></q-card-section>
+                                    <q-separator></q-separator>
+                                    <q-card-actions align="right">
+                                        <q-btn color="primary" size="sm" @click="closeDialogItem">
+                                            <q-icon name="cancel" left />
+                                            Cancelar
+                                        </q-btn>
+                                    </q-card-actions>
+                                </q-card>
+                            </q-dialog>
+
+                            <br />Selected: {{ JSON.stringify(rowSelection) }}
                         </template>
 
                         <template v-slot:body-cell-roles="item">
@@ -161,7 +209,84 @@ init();
                             <q-td>
                                 <div class="text-center" v-for="a of item.row.sedeAcargo" :key="a">
                                     <q-chip square size="sm" :color="colorSede(a)" text-color="white" :label="a" />
-                                    <!-- <q-chip square size="sm" color="#1976D2" text-color="white" :label="a" /> -->
+                                </div>
+                            </q-td>
+                        </template>
+
+                        <template v-slot:body-cell-estado="item">
+                            <q-td>
+                                <div class="text-center">
+                                    <q-icon size="xs" :name="item.row.estado ? 'thumb_up' : 'thumb_down'" :color="item.row.estado ? 'secondary' : 'primary'"> </q-icon>
+                                </div>
+                            </q-td>
+                        </template>
+
+                        <template v-slot:body-cell-online="item">
+                            <q-td>
+                                <div class="text-center">
+                                    <q-icon size="xs" name="fiber_manual_record" :color="item.row.online ? 'secondary' : 'primary'"> </q-icon>
+                                </div>
+                            </q-td>
+                        </template>
+
+                        <template v-slot:body-cell-actions="item">
+                            <q-td>
+                                <div class="text-center">
+                                    <q-btn flat round color="info">
+                                        <q-icon name="visibility"></q-icon>
+                                        <q-tooltip
+                                            class="bg-info"
+                                            anchor="center left"
+                                            self="center end"
+                                            :offset="[10, 10]"
+                                            transition-show="flip-right"
+                                            transition-hide="flip-left"
+                                        >
+                                            Ver
+                                        </q-tooltip>
+                                    </q-btn>
+
+                                    <q-btn flat round color="warning">
+                                        <q-icon name="logout"></q-icon>
+                                        <q-tooltip
+                                            class="bg-warning"
+                                            anchor="center left"
+                                            self="center end"
+                                            :offset="[10, 10]"
+                                            transition-show="flip-right"
+                                            transition-hide="flip-left"
+                                        >
+                                            Forzar Cierre
+                                        </q-tooltip>
+                                    </q-btn>
+
+                                    <q-btn flat round color="accent">
+                                        <q-icon name="restart_alt"></q-icon>
+                                        <q-tooltip
+                                            class="bg-accent"
+                                            anchor="center left"
+                                            self="center end"
+                                            :offset="[10, 10]"
+                                            transition-show="flip-right"
+                                            transition-hide="flip-left"
+                                        >
+                                            Reset Pass
+                                        </q-tooltip>
+                                    </q-btn>
+
+                                    <q-btn flat round color="primary">
+                                        <q-icon name="delete"></q-icon>
+                                        <q-tooltip
+                                            class="bg-primary"
+                                            anchor="center left"
+                                            self="center end"
+                                            :offset="[10, 10]"
+                                            transition-show="flip-right"
+                                            transition-hide="flip-left"
+                                        >
+                                            Eliminar
+                                        </q-tooltip>
+                                    </q-btn>
                                 </div>
                             </q-td>
                         </template>
