@@ -33,6 +33,7 @@ let editedItem = ref({
     codigo: "",
     name: "",
     username: "",
+    password: "",
     documento: "",
     email: "",
     phone: "",
@@ -45,6 +46,7 @@ let defaultItem = ref({
     codigo: "",
     name: "",
     username: "",
+    password: "",
     documento: "",
     email: "",
     phone: "",
@@ -53,8 +55,9 @@ let defaultItem = ref({
     sedeAcargo: [],
     estado: false,
 });
+let isPwd = ref(true);
 let dialogItem = ref(false);
-let titleDialog = computed(() => (editedIndex.value === -1 ? `Nuevo Rol` : `Actualizar Rol`));
+let titleDialog = computed(() => (editedIndex.value === -1 ? `Nuevo Usuario` : `Actualizar Usuario`));
 const loadingBtn = ref([false]);
 const rowSelection = ref([]);
 
@@ -180,11 +183,113 @@ init();
                             </q-btn>
 
                             <q-dialog v-model="dialogItem" persistent transition-show="flip-down" transition-hide="flip-up">
-                                <q-card>
-                                    <q-card-section></q-card-section>
-                                    <q-separator></q-separator>
-                                    <q-card-section></q-card-section>
-                                    <q-separator></q-separator>
+                                <q-card style="width: 800px; max-width: 90vw">
+                                    <q-card-section class="bg-primary text-white text-uppercase row items-center q-pb-none">
+                                        <q-icon name="label" size="sm" left />
+                                        <span class="text-h6">{{ titleDialog }}</span>
+                                        <q-space />
+                                        <q-btn icon="close" flat round dense @click="closeDialogItem" />
+                                    </q-card-section>
+                                    <q-separator />
+                                    <q-card-section>
+                                        <q-form>
+                                            <div class="row q-gutter-md">
+                                                <div class="col-8">
+                                                    <q-input v-model="editedItem.name" label="Colaborador" color="primary" autofocus dense outlined input-class="text-left">
+                                                        <template v-slot:prepend>
+                                                            <q-icon name="label" />
+                                                        </template>
+                                                    </q-input>
+                                                </div>
+                                                <div class="col-3">
+                                                    <q-input
+                                                        v-model="editedItem.documento"
+                                                        label="DNI"
+                                                        type="text"
+                                                        color="primary"
+                                                        maxlength="8"
+                                                        dense
+                                                        outlined
+                                                        input-class="text-left"
+                                                    >
+                                                        <template v-slot:prepend>
+                                                            <q-icon name="fingerprint" />
+                                                        </template>
+                                                    </q-input>
+                                                </div>
+                                                <div class="col-8">
+                                                    <q-input
+                                                        v-model="editedItem.email"
+                                                        label="Correo"
+                                                        type="email"
+                                                        suffix="@autonortnor.com.pe"
+                                                        color="primary"
+                                                        dense
+                                                        outlined
+                                                        input-class="text-right"
+                                                    >
+                                                        <template v-slot:prepend>
+                                                            <!-- <q-icon name="alternate_email" /> -->
+                                                            <q-icon name="mail" />
+                                                        </template>
+                                                    </q-input>
+                                                </div>
+                                                <div class="col-3">
+                                                    <q-input
+                                                        v-model="editedItem.phone"
+                                                        label="Celular"
+                                                        type="tel"
+                                                        color="primary"
+                                                        mask="### - ### - ###"
+                                                        dense
+                                                        outlined
+                                                        input-class="text-left"
+                                                    >
+                                                        <template v-slot:prepend>
+                                                            <q-icon name="phone" />
+                                                        </template>
+                                                    </q-input>
+                                                </div>
+                                                <div class="col-4">
+                                                    <q-input v-model="editedItem.username" label="Usuario" color="primary" dense outlined input-class="text-center">
+                                                        <template v-slot:prepend>
+                                                            <q-icon name="account_box" />
+                                                        </template>
+                                                    </q-input>
+                                                </div>
+                                                <div class="col-4">
+                                                    <q-input
+                                                        v-model="editedItem.password"
+                                                        label="Password"
+                                                        color="primary"
+                                                        :type="isPwd ? 'password' : 'text'"
+                                                        dense
+                                                        outlined
+                                                        input-class="text-center"
+                                                    >
+                                                        <template v-slot:prepend>
+                                                            <q-icon name="password" />
+                                                        </template>
+
+                                                        <template v-slot:append>
+                                                            <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click="isPwd = !isPwd" />
+                                                        </template>
+                                                    </q-input>
+                                                </div>
+                                                <div class="col-3">
+                                                    <q-toggle
+                                                        v-model="editedItem.estado"
+                                                        color="primary"
+                                                        :icon="editedItem.estado ? 'thumb_up' : 'thumb_down'"
+                                                        :label="`Estado ${editedItem.estado}`"
+                                                        :false-value="false"
+                                                        :true-value="true"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </q-form>
+                                    </q-card-section>
+                                    <q-separator />
                                     <q-card-actions align="right">
                                         <q-btn color="primary" size="sm" @click="closeDialogItem">
                                             <q-icon name="cancel" left />
@@ -320,5 +425,10 @@ init();
 
 .anchoBtn {
     width: 180px;
+}
+
+.maximum-Card {
+    width: 700px;
+    max-width: 95vw;
 }
 </style>
