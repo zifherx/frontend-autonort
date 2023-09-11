@@ -1,5 +1,7 @@
 import * as notif from "src/plugins/notifications";
 
+// HTTP RESPONSES
+
 export function HTTPResponse__200(response) {
     return response === 200 ? true : false;
 }
@@ -11,6 +13,8 @@ export function HTTPResponse(response) {
     };
     return mapResponse[response] ?? false;
 }
+
+// VALIDATING
 
 export function checkNullOrUndefined(field) {
     const map = {
@@ -24,6 +28,8 @@ export function checkNullOrUndefined(field) {
 export function cleanTable(table) {
     table.splice(table, table.length);
 }
+
+// ERRORS HANDLING
 
 export function handleError(param) {
     let obj = {};
@@ -73,14 +79,95 @@ export function handleError(param) {
     notif.alertError(obj.title, obj.message);
 }
 
+// COLORS
+
 export function colorSede(item) {
     if (item === "Jaén") return "purple-6";
     else if (item === "Trujillo") return "amber-7";
     else if (item === "Chachapoyas") return "blue-6";
     else if (item === "Tarapoto") return "green-6";
-    else if (item === "Todas") return "$primary";
+    else if (item === "Todas") return "red-10";
     else return "brown-4";
 }
+
+export function colorArea(item) {
+    if (item === "ADMINISTRACIÓN") return "grey-10";
+    else if (item === "ADV") return "blue-grey-8";
+    else if (item === "BACK OFFICE") return "deep-orange-10";
+    else if (item === "CADENA VALOR") return "orange-5";
+    else if (item === "CANAL DIGITAL") return "cyan-13";
+    else if (item === "CONEXOS") return "purple-10";
+    else if (item === "CONTABILIDAD") return "brown-9";
+    else if (item === "DC") return "red-13";
+    else if (item === "EPDP") return "pink-9";
+    else if (item === "FINANZAS") return "indigo-14";
+    else if (item === "GERENCIA") return "deep-purple-10";
+    else if (item === "MAF") return "red-7";
+    else if (item === "MARKETING") return "pink-5";
+    else if (item === "PDS") return "amber-10";
+    else if (item === "PLANEAMIENTO COMERCIAL") return "lime-10";
+    else if (item === "REPUESTOS") return "purple";
+    else if (item === "RRHH") return "yellow-10";
+    else if (item === "SEMINUEVOS") return "deep-orange-4";
+    else if (item === "SERVICIOS") return "orange-8";
+    else if (item === "SERVICIOS GENERALES") return "cyan-10";
+    else if (item === "TASACIONES") return "light-blue-13";
+    else if (item === "TI") return "purple-12";
+    else if (item === "TRÁMITES") return "blue-10";
+    else if (item === "TUNNING") return "cyan-8";
+    else if (item === "VENTAS") return "green-10";
+}
+
+// ABREVIATURAS
+
+export function abreviaturaSede(item) {
+    if (item === "Jaén") return "JAE";
+    else if (item === "Trujillo") return "TRU";
+    else if (item === "Chachapoyas") return "CHA";
+    else if (item === "Tarapoto") return "TAR";
+    else if (item === "Todas") return "TOD";
+}
+
+export function abreviaturaArea(item) {
+    if (item === "ADMINISTRACIÓN") return "ADM";
+    else if (item === "ADV") return "ADV";
+    else if (item === "BACK OFFICE") return "BO";
+    else if (item === "CADENA VALOR") return "CV";
+    else if (item === "CANAL DIGITAL") return "CD";
+    else if (item === "CONEXOS") return "COX";
+    else if (item === "CONTABILIDAD") return "CON";
+    else if (item === "DC") return "DC";
+    else if (item === "EPDP") return "EPDP";
+    else if (item === "FINANZAS") return "FIN";
+    else if (item === "GERENCIA") return "GER";
+    else if (item === "MAF") return "MAF";
+    else if (item === "MARKETING") return "MKT";
+    else if (item === "PDS") return "PDS";
+    else if (item === "PLANEAMIENTO COMERCIAL") return "PLC";
+    else if (item === "REPUESTOS") return "REP";
+    else if (item === "RRHH") return "RH";
+    else if (item === "SEMINUEVOS") return "SEN";
+    else if (item === "SERVICIOS") return "SER";
+    else if (item === "SERVICIOS GENERALES") return "SG";
+    else if (item === "TASACIONES") return "TAS";
+    else if (item === "TI") return "TI";
+    else if (item === "TRÁMITES") return "TRA";
+    else if (item === "TUNNING") return "TUN";
+    else if (item === "VENTAS") return "VEN";
+}
+
+export function abreviaturaRol(word) {
+    let inicial = word.split("-");
+    if (inicial.length === 3) {
+        return inicial[0].slice(0, 1).toUpperCase() + inicial[1].slice(0, 1).toUpperCase() + inicial[2].slice(0, 1).toUpperCase();
+    } else if (inicial.length === 2) {
+        return inicial[0].slice(0, 1).toUpperCase() + inicial[1].slice(0, 1).toUpperCase();
+    } else {
+        return inicial[0].slice(0, 3).toUpperCase();
+    }
+}
+
+// DATES
 
 export function formattingDate(date, option) {
     let newDate = new Date(date);

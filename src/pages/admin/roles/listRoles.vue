@@ -39,11 +39,10 @@ let defaultItem = ref({
 });
 let titleDialog = computed(() => (editedIndex.value === -1 ? `Nuevo Rol` : `Actualizar Rol`));
 
-const loadingBtn = ref([false]);
-const progress = ref(false);
+const loadingItem = ref([false]);
 
-function simulateProgress(number) {
-    loadingBtn.value[number] = true;
+function loaderItem(number) {
+    loadingItem.value[number] = true;
 
     setTimeout(() => {
         console.log("Objeto Guardado");
@@ -51,7 +50,7 @@ function simulateProgress(number) {
     }, 1000);
 
     setTimeout(() => {
-        loadingBtn.value[number] = false;
+        loadingItem.value[number] = false;
     }, 3000);
 }
 
@@ -138,10 +137,10 @@ async function saveItem() {
 }
 
 async function deleteItem(item) {
-    console.log(item);
-    const askEliminar = notif.askQuestion("Estás seguro que deseas eliminar", "No podrás revertir la operación");
+    // console.log(item);
+    const askEliminar = notif.askDelete();
     askEliminar.then(async (result) => {
-        console.log(result);
+        // console.log(result);
         if (result.isConfimed) {
             try {
                 const query = await deleteServiceById("roles", item.codigo);
@@ -267,7 +266,7 @@ init();
                                             <q-icon name="cancel" left></q-icon>
                                             Cancelar
                                         </q-btn>
-                                        <q-btn color="secondary" size="sm" class="q-ml-sm anchoBtn" :loading="loadingBtn[0]" @click="simulateProgress(0)">
+                                        <q-btn color="secondary" size="sm" class="q-ml-sm anchoBtn" :loading="loadingItem[0]" @click="loaderItem(0)">
                                             Aceptar
                                             <q-icon name="done" right />
                                             <template v-slot:loading>

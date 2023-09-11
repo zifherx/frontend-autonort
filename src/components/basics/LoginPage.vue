@@ -1,25 +1,25 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed, reactive, ref } from "vue";
 import { useAuthStore } from "stores/auth.store";
 
 const authStore = useAuthStore();
 const { loginSessionStore } = authStore;
 
-const account = ref({
+let account = ref({
     username: "",
     password: "",
 });
 
-const defaultAccount = ref({
+let defaultAccount = ref({
     username: "",
     password: "",
 });
 
 const inputFillCancelled = ref(false);
-const isPwd = ref(true);
-const loading = ref([]);
+let isPwd = ref(true);
+let loading = reactive([]);
 
-const inputShadowText = computed(() => {
+let inputShadowText = computed(() => {
     if (inputFillCancelled.value === true) return "";
 
     const placeHolderUsername = "Ingrese usuario";
@@ -31,7 +31,7 @@ const inputShadowText = computed(() => {
 });
 
 function loginAccount(number) {
-    this.loading[number] = true;
+    loading[number] = true;
 
     setTimeout(() => {
         // console.log("Valores:", account.value);
@@ -39,8 +39,8 @@ function loginAccount(number) {
     }, 2000);
 
     setTimeout(() => {
-        this.loading[number] = false;
-        this.account = Object.assign({}, this.defaultAccount);
+        loading[number] = false;
+        account = Object.assign({}, defaultAccount.value);
     }, 5000);
 }
 </script>

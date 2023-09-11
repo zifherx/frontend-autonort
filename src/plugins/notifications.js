@@ -18,6 +18,21 @@ export function askQuestion(question, subtitle) {
     });
 }
 
+export function askDelete() {
+    return Swal.fire({
+        title: `¿Estás seguro que deseas eliminar?`,
+        icon: "question",
+        text: `No podrás revertir la operación`,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showCancelButton: true,
+        confirmButtonColor: "#388e3c",
+        cancelButtonColor: "#d50000",
+        cancelButtonText: "Cancelar",
+        confirmButtonText: "¡Sí!",
+    });
+}
+
 export function notify_Succesfull(message) {
     const toast = Swal.mixin({
         toast: true,

@@ -31,8 +31,9 @@ export const useAuthStore = defineStore("Auth", () => {
                 // router.push("/dashboard");
             }
         } catch (err) {
-            console.log(err);
-            console.log(err.response);
+            pro.handleError(err.response);
+            // console.log(err);
+            // console.log(err.response);
         }
     };
     const detectUserStore = async () => {
@@ -50,8 +51,9 @@ export const useAuthStore = defineStore("Auth", () => {
             const query = await getServiceById("users", userStore.value.userId);
             if (pro.HTTPResponse(query.status)) onlineStore.value = query.data.one;
         } catch (err) {
-            console.log(err);
-            console.log(err.response);
+            pro.handleError(err.response);
+            // console.log(err);
+            // console.log(err.response);
         }
     };
     const logoutSessionStore = async () => {
@@ -64,8 +66,9 @@ export const useAuthStore = defineStore("Auth", () => {
                     console.log("Usuario desconectado ♠");
                 }
             } catch (err) {
-                console.log(err);
-                console.log(err.response);
+                pro.handleError(err.response);
+                // console.log(err);
+                // console.log(err.response);
             }
             localStorage.removeItem("data-token");
             localStorage.removeItem("data-user");
