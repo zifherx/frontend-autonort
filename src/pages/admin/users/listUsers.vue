@@ -143,7 +143,7 @@ function initCombos() {
 }
 
 function viewItem(item) {
-    console.log("Item:", item);
+    // console.log("Item:", item);
     editedIndex.value = contentTable.indexOf(item);
     editedItem.value = Object.assign({}, item);
     // MANUALES
@@ -282,7 +282,38 @@ function abreviaturaRol(item) {
 }
 
 async function exportItems() {
-    notif.notify_Succesfull("Exportando");
+    const headerT = ref([
+        { header: "Colaborador", key: "name", width: 40 },
+        { header: "Sede", key: "sede", width: 20 },
+        { header: "Usuario", key: "username", width: 20 },
+        { header: "DNI", key: "documento", width: 20 },
+        { header: "Roles", key: "roles", width: 20 },
+        { header: "Email", key: "email", width: 40 },
+        { header: "Celular", key: "cellphone", width: 20 },
+        { header: "Area", key: "area", width: 20 },
+        { header: "Cobertura", key: "sedeAcargo", width: 35 },
+        { header: "Estado", key: "estado", width: 20 },
+        { header: "Online", key: "online", width: 20 },
+    ]);
+    const contentT = ref([]);
+
+    for (let item of contentTable) {
+        contentT.value.push({
+            name: item.name,
+            sede: item.sucursalE,
+            username: item.username,
+            documento: item.documento,
+            roles: item.roles.join(),
+            email: item.email,
+            cellphone: item.phone,
+            area: item.areaE,
+            sedeAcargo: item.sedeAcargo.join(),
+            estado: item.estado,
+            online: item.online,
+        });
+    }
+
+    xs.createExcelTable(`Lista de Usuarios ${new Date().getFullYear()}`, headerT.value, contentT.value, "A1:K1", `Catalogo de Usuarios - ${new Date().getFullYear()}`);
 }
 
 async function getComboSede() {

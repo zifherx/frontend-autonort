@@ -1,5 +1,6 @@
 import Swal from "sweetalert2";
-import "sweetalert2/dist/sweetalert2.min.css";
+// import "sweetalert2/dist/sweetalert2.min.css";
+import "sweetalert2/dist/sweetalert2.all";
 
 const timerCounter = 2500;
 
