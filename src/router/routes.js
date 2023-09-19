@@ -30,6 +30,12 @@ const routes = [
                 path: "/dashboard/crm",
                 component: () => import("pages/mainDashboard/DashboardCRMPage.vue"),
             },
+            // PROFILE
+            {
+                name: "Perfil",
+                path: "/profile",
+                component: () => import("pages/Profile.vue"),
+            },
             // SETTINGS
             {
                 name: "Configuración",

@@ -62,7 +62,7 @@ export function alertError(title, message) {
         allowOutsideClick: false,
         allowEscapeKey: false,
         timerProgressBar: true,
-        timer: counterTimer,
+        timer: timerCounter,
         didOpen: (a) => {
             a.addEventListener("mouseenter", Swal.stopTimer);
             a.addEventListener("mouseleave", Swal.resumeTimer);
